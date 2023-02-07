@@ -1,15 +1,34 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <VNavbar name="MamuroEmail" />
+    <SearchBar />
+    <EmailList />
+  </div>
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import VNavbar from './components/V-Navbar.vue'
+import EmailList from "./components/EmailList.vue"
+import SearchBar from "./components/V-SearchBar.vue"
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    VNavbar,
+    EmailList,
+    SearchBar
+  },
+  methods: {
+    a() {
+      console.log("XD")
+      this.msg = "Sexo"
+    }
+  },
+  data() {
+    return {
+      msg: "XD"
+    }
   }
 }
 </script>
@@ -19,8 +38,11 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
+
 </style>
+
+
+
+<style src="./assets/tailwind.css" />
