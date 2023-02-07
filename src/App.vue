@@ -1,34 +1,20 @@
 <template>
   <div id="app">
     <VNavbar name="MamuroEmail" />
-    <SearchBar />
-    <EmailList />
+    <EmailsView name="MamuroEmail" />
   </div>
 
 </template>
 
 <script>
-import VNavbar from './components/V-Navbar.vue'
-import EmailList from "./components/EmailList.vue"
-import SearchBar from "./components/V-SearchBar.vue"
+import VNavbar from '@/components/V-Navbar.vue'
+import EmailsView from '@/views/EmailsView.vue'
 
 export default {
   name: 'App',
   components: {
-    VNavbar,
-    EmailList,
-    SearchBar
-  },
-  methods: {
-    a() {
-      console.log("XD")
-      this.msg = "Sexo"
-    }
-  },
-  data() {
-    return {
-      msg: "XD"
-    }
+    EmailsView,
+    VNavbar
   }
 }
 </script>
