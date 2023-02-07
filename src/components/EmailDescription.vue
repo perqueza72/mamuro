@@ -1,5 +1,5 @@
 <template>
-    <div class="email-text-div mr-7 mt-5">
+    <div id="email-text-div" class="mr-7 mt-5">
 
         <p class="tracking-normal font-bold">
             {{ email.Subject }}
@@ -7,7 +7,7 @@
         <p>
             <br/>
         </p>
-        <p>
+        <p class="email-content">
             {{ email.Content }}
         </p>
     </div>
@@ -18,21 +18,37 @@
 export default {
     name: "EmailDescription",
     props:{
-        email: Object
+        email: {
+            Object,
+            default(){
+                return {
+                    Subject: String,
+                    Content: String
+                }
+            }
+        }
+    },
+    updated(){
+        document.getElementById("email-text-div").scrollTop = 0
     }
+    
 }
 </script>
 
 
 <style>
 
-.email-text-div{
+#email-text-div{
     display: inline-block;
     overflow-y: scroll;
 }
 
-.email-text-div > p{
+#email-text-div > p{
     display: block;
+}
+
+.email-content{
+    white-space: pre-wrap;
 }
 
 </style>
