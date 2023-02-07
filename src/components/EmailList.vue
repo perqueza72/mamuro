@@ -1,9 +1,11 @@
 <template>
     <div class="mx-auto email_container">
         <div class="table_div box-content p-5">
-            <EmailTable class="table" v-bind:emails="email_page" :selectEmail="SelectEmail" />
-            <VPagination class="pagination_div" v-bind:selected_page="page" v-bind:nextPage="NextPage" v-bind:previousPage="PreviousPage"
-                v-bind:getPage="GetPage" />
+            <EmailTable class="table" v-bind:emails="email_page" :selectEmail="selectEmail"
+            v-bind:sortEmailsBy="sortEmailsBy"
+            />
+            <VPagination class="pagination_div" v-bind:selected_page="page" v-bind:nextPage="nextPage"
+                v-bind:previousPage="previousPage" v-bind:getPage="getPage" />
         </div>
         <EmailDescription class="description" v-bind:email="email" />
     </div>
@@ -19,15 +21,15 @@ import EmailTable from "./EmailTable.vue"
 import EmailDescription from "./EmailDescription.vue"
 import VPagination from "./Pagination.vue"
 import axios from 'axios'
-import { GET_EMAIL_PAGE_URL } from "@/constants"
+import { GET_EMAIL_PAGE_URL, GET_EMAIL_PAGE_BY_SEARCH_URL } from "@/constants"
 
 export default {
     name: "EmailList",
     components: {
-        EmailTable,
-        EmailDescription,
-        VPagination
-    },
+    EmailTable,
+    EmailDescription,
+    VPagination
+},
     data() {
         return {
             email_page: [{}],
@@ -37,33 +39,48 @@ export default {
             email: {
 
             },
-            page: 0
+            page: 0,
+            sort_field : ["Subject"]
+        }
+    },
+    props:{
+        email_query: {
+            type: String,
+            default: ""
         }
     },
     methods: {
-        SelectEmail(email) {
+        selectEmail(email) {
             this.email = email
         },
-        NextPage() {
-            this.GetPage(this.page + 1)
+        nextPage() {
+            this.getPage(this.page + 1)
         },
-        PreviousPage() {
-            this.GetPage(this.page - 1)
+        previousPage() {
+            this.getPage(this.page - 1)
         },
-        GetPage(number) {
+        getPage(number) {
             if (number < 0) return;
             this.page = number
             if (this.email_pages[number] != undefined) {
                 this.email_page = this.email_pages[number]
                 return
             }
-            this.GetEmailData()
+            this.getEmailData()
         },
-        GetEmailData() {
+        getEmailData(query = this.email_query) {
+            const url = query === "" ? 
+            GET_EMAIL_PAGE_URL : GET_EMAIL_PAGE_BY_SEARCH_URL
+
+            if(this.email_query != query){
+                this.page = 0
+            }
+
             axios
-                .post(GET_EMAIL_PAGE_URL, {
-                    "SortField": ["Subject"],
-                    "IndexPage": this.page
+                .post(url,{ 
+                    "SortField": this.sort_field,
+                    "IndexPage": this.page,
+                    "SpecificText": query
                 })
                 .then(response => {
                     this.email_pages[this.page] = response.data
@@ -73,10 +90,29 @@ export default {
                     this.email = {}
                     console.log(err)
                 })
+        },
+        sortEmailsBy(field){
+
+            if (this.sort_field[0] === field){
+                field = "-"+field
+            }
+            this.sort_field[0] = field
+            this.resetData()
+            this.getEmailData(this.default_request)
+        },
+        resetData(){
+            this.email_page = [{}]
+            this.email_pages = {
+                "-1": {}
+            }
+            this.email = {
+
+            }
+            this.page = 0
         }
     },
     mounted() {
-        this.GetEmailData()
+        this.getEmailData()
     }
 
 }
@@ -104,10 +140,8 @@ export default {
     width: 60%;
 }
 
-
-
 @media (max-width: 600px) {
-    .email_container{
+    .email_container {
         display: block;
     }
 
